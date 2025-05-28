@@ -4,8 +4,7 @@
 - Abdirahman Mohamed
 
 ## Deployed GitHub Pages URL
-[https://your-username.github.io/Lab8_Starter](https://your-username.github.io/Lab8_Starter)  
-_(Replace `your-username` with your actual GitHub username)_
+[https://a7mohamed.github.io/Lab8_Starter/](https://a7mohamed.github.io/Lab8_Starter/)  
 
 ## Graceful Degradation and Service Workers
 
