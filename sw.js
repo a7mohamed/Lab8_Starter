@@ -2,6 +2,40 @@
 //         so do not move it next to the other scripts
 
 const CACHE_NAME = 'lab-8-starter';
+const urlsToCache = [
+  '/', // homepage
+  '/index.html',
+  '/assets/scripts/main.js',
+  '/assets/scripts/RecipeCard.js',
+  '/assets/styles/main.css',
+
+  // Recipe JSON files
+  '/recipes/1_50-thanksgiving-side-dishes.json',
+  '/recipes/2_roasting-turkey-breast-with-stuffing.json',
+  '/recipes/3_moms-cornbread-stuffing.json',
+  '/recipes/4_50-indulgent-thanksgiving-side-dishes-for-any-holiday-gathering.json',
+  '/recipes/5_healthy-thanksgiving-recipe-crockpot-turkey-breast.json',
+  '/recipes/6_one-pot-thanksgiving-dinner.json',
+
+  // Star icons
+  '/assets/images/icons/1-star.svg',
+  '/assets/images/icons/2-star.svg',
+  '/assets/images/icons/3-star.svg',
+  '/assets/images/icons/4-star.svg',
+  '/assets/images/icons/5-star.svg',
+
+  // Other image assets
+  '/assets/images/icons/arrow-down.png',
+
+  // App icons (important for PWA manifest too)
+  '/assets/images/icons/icon-192x192.png',
+  '/assets/images/icons/icon-256x256.png',
+  '/assets/images/icons/icon-384x384.png',
+  '/assets/images/icons/icon-512x512.png',
+
+  // Manifest (for PWA)
+  '/manifest.json'
+];
 
 // Installs the service worker. Feed it some initial URLs to cache
 self.addEventListener('install', function (event) {
@@ -9,7 +43,8 @@ self.addEventListener('install', function (event) {
     caches.open(CACHE_NAME).then(function (cache) {
       // B6. TODO - Add all of the URLs from RECIPE_URLs here so that they are
       //            added to the cache when the ServiceWorker is installed
-      return cache.addAll([]);
+
+      return cache.addAll(urlsToCache);
     })
   );
 });
@@ -34,7 +69,24 @@ self.addEventListener('fetch', function (event) {
   /*******************************/
   // B7. TODO - Respond to the event by opening the cache using the name we gave
   //            above (CACHE_NAME)
+  event.respondWith(
+    caches.match(event.request).then(function (response) {
+      if (response) {
   // B8. TODO - If the request is in the cache, return with the cached version.
   //            Otherwise fetch the resource, add it to the cache, and return
   //            network response.
+        return response;
+      }
+
+      return fetch(event.request).then(function (networkResponse) {
+        return caches.open(CACHE_NAME).then(function (cache) {
+          cache.put(event.request, networkResponse.clone());
+          return networkResponse;
+        });
+      }).catch(function (error) {
+        console.error('Fetching failed:', error);
+        throw error;
+      });
+    })
+  );
 });
